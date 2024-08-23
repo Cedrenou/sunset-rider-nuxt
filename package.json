@@ -1,14 +1,19 @@
 {
-  "name": "nuxt-app",
+  "name": "sunset-rider-nuxt",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
     "dev": "nuxt dev",
+    "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
+  "engines": {
+      "node": ">=20"
+  },
+  "main": "/",
   "dependencies": {
     "axios": "^1.7.4",
     "nuxt": "^3.13.0",
