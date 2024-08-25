@@ -1,14 +1,9 @@
 <template>
-  <header>
-    <nav style="display: flex; flex-direction: column">
-      <a href="/">Home</a>
-      <a href="/products">Products</a>
-      <a href="/products/1">Detail produit</a>
-    </nav>
-  </header>
+  <Header />
   <NuxtPage />
-
-  <footer>
-    <p>Footer</p>
-  </footer>
+  <Footer />
 </template>
+<script setup lang="ts">
+import Header from '~/components/layout/Header.vue'
+import Footer from '~/components/layout/Footer.vue'
+</script>
