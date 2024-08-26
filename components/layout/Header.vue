@@ -158,10 +158,10 @@
 
             <!-- Logo -->
             <div class="ml-4 flex lg:ml-0">
-              <a href="#">
+              <NuxtLink to="/">
                 <span class="sr-only">Sunset Rider Shop Logo</span>
                 <img class="h-8 w-auto" :src="logoSunsetRiderShop" alt="" />
-              </a>
+              </NuxtLink>
             </div>
 
             <!-- Flyout menus -->
@@ -193,8 +193,9 @@
                     leave-from-class="opacity-100"
                     leave-to-class="opacity-0"
                   >
-                    <PopoverPanel class="absolute inset-x-0 top-full text-sm text-gray-500">
-                      <!-- Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow -->
+                    <PopoverPanel
+                      class="absolute inset-x-0 top-full text-sm text-gray-500 z-10 shadow-lg"
+                    >
                       <div class="absolute inset-0 top-1/2 bg-white shadow" aria-hidden="true" />
 
                       <div class="relative bg-white">
