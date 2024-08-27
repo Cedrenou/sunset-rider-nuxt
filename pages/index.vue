@@ -10,6 +10,7 @@
 
     <!--  display all the data of products as json   -->
     <span v-if="loading">Loading ...</span>
+    <span v-if="error">Error: {{ error }}</span>
     <pre v-if="products">{{ products }}</pre>
   </div>
 </template>
