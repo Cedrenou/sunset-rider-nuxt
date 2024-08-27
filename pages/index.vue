@@ -9,24 +9,7 @@
     </button>
 
     <!--  display all the data of products as json   -->
-    <pre v-if="product">{{ product }}</pre>
   </div>
 </template>
 
-<script setup>
-import { onMounted, ref } from 'vue'
-import { useWooCommerce } from '~/composables/useWooCommerce.js'
-
-const { fetchProduct } = useWooCommerce()
-const product = ref(null)
-
-onMounted(() => {
-  fetchProduct('3843')
-    .then((data) => {
-      product.value = data
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-})
-</script>
+<script setup></script>

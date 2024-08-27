@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import WooCommerceRestApi from '@woocommerce/woocommerce-rest-api'
 
 export function useWooCommerce() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports,no-undef
   const config = useRuntimeConfig()
   const api = new WooCommerceRestApi({
     url: config.public.woocommerce.url,
