@@ -9,19 +9,24 @@
     </button>
 
     <!--  display all the data of products as json   -->
-    <span v-if="loading">Loading ...</span>
-    <span v-if="error">Error: {{ error }}</span>
-    <pre v-if="products">{{ products }}</pre>
+    <pre v-if="product">{{ product }}</pre>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useWooCommerce } from '~/composables/useWooCommerce.js'
 
-const { products, loading, error, fetchProductById } = useWooCommerce()
+const { fetchProduct } = useWooCommerce()
+const product = ref(null)
 
 onMounted(() => {
-  fetchProductById('3843')
+  fetchProduct('3843')
+    .then((data) => {
+      product.value = data
+    })
+    .catch((error) => {
+      console.error(error)
+    })
 })
 </script>

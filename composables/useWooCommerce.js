@@ -1,37 +1,16 @@
 // composables/useWooCommerce.ts
-import { ref, onMounted } from 'vue'
-import { useRuntimeConfig } from '#app'
+import { ref } from 'vue'
+import WooCommerceRestApi from '@woocommerce/woocommerce-rest-api'
 
 export function useWooCommerce() {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports,no-undef
   const config = useRuntimeConfig()
-  const WooCommerceRestApi = ref(null)
-  const api = ref(null)
-  // const api = new WooCommerceRestApi({
-  //   url: config.public.woocommerce.url,
-  //   consumerKey: config.public.woocommerce.consumerKey,
-  //   consumerSecret: config.public.woocommerce.consumerSecret,
-  //   version: 'wc/v3',
-  // })
-
-  const initWoocommerce = async () => {
-    if (!WooCommerceRestApi.value) {
-      try {
-        WooCommerceRestApi.value = (await import('@woocommerce/woocommerce-rest-api')).default
-      } catch (error) {
-        console.error("Erreur lors de l'import de WooCommerceRestApi:", error)
-        return
-      }
-    }
-
-    if (WooCommerceRestApi.value && !api.value) {
-      api.value = new WooCommerceRestApi.value({
-        url: config.public.woocommerce.url,
-        consumerKey: config.public.woocommerce.consumerKey,
-        consumerSecret: config.public.woocommerce.consumerSecret,
-        version: 'wc/v3',
-      })
-    }
-  }
+  const api = new WooCommerceRestApi({
+    url: config.public.woocommerce.url,
+    consumerKey: config.public.woocommerce.consumerKey,
+    consumerSecret: config.public.woocommerce.consumerSecret,
+    version: 'wc/v3',
+  })
 
   const products = ref([])
   const loading = ref(false)
@@ -41,7 +20,7 @@ export function useWooCommerce() {
     loading.value = true
     error.value = null
     try {
-      const response = await api.value.get('products')
+      const response = await api.get('products')
       products.value = response.data
     } catch (err) {
       error.value = err
@@ -51,12 +30,12 @@ export function useWooCommerce() {
     }
   }
 
-  const fetchProductById = async (id) => {
+  const fetchProduct = async (id) => {
     loading.value = true
     error.value = null
     try {
-      const response = await api.value.get(`products/${id}`)
-      products.value = response.data
+      const response = await api.get(`products/${id}`)
+      return response.data
     } catch (err) {
       error.value = err
       console.error('Erreur lors de la récupération du produit:', err)
@@ -65,15 +44,11 @@ export function useWooCommerce() {
     }
   }
 
-  onMounted(() => {
-    initWoocommerce()
-  })
-
   return {
     products,
     loading,
     error,
     fetchProducts,
-    fetchProductById,
+    fetchProduct,
   }
 }
