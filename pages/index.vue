@@ -7,5 +7,20 @@
     >
       Voir les produits
     </button>
+
+    <!--  display all the data of products as json   -->
+    <span v-if="loading">Loading ...</span>
+    <pre v-if="products">{{ products }}</pre>
   </div>
 </template>
+
+<script setup>
+import { onMounted } from 'vue'
+import { useWooCommerce } from '~/composables/useWooCommerce.js'
+
+const { products, loading, error, fetchProductById } = useWooCommerce()
+
+onMounted(() => {
+  fetchProductById('3843')
+})
+</script>

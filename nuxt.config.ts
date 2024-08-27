@@ -5,11 +5,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig: {
     public: {
-      wooCommerceAPIBaseURL: process.env.WOOCOMMERCE_API_BASE_URL,
+      woocommerce: {
+        url: process.env.WOOCOMMERCE_API_BASE_URL,
+        consumerKey: process.env.WOOCOMMERCE_API_CONSUMER_KEY,
+        consumerSecret: process.env.WOOCOMMERCE_API_CONSUMER_SECRET,
+      },
     },
-    private: {
-      wooCommerceAPIConsumerKey: process.env.WOOCOMMERCE_API_CONSUMER_KEY,
-      wooCommerceAPIConsumerSecret: process.env.WOOCOMMERCE_API_CONSUMER_SECRET,
-    },
-  }
+  },
 })
