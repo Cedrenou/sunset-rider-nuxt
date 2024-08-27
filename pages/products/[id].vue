@@ -64,21 +64,15 @@
 
         <div class="mt-4 lg:row-span-3 lg:mt-0 lg:flex lg:flex-col">
           <h2 class="sr-only">Information produit</h2>
-          <p class="text-3xl tracking-tight text-gray-900 text-right px-4">
+          <p class="text-3xl tracking-tight text-gray-900 text-left px-4 pb-4 uppercase font-bold">
+            {{ product.name }}
+          </p>
+          <p class="text-lg tracking-tight text-gray-500 text-left px-4">
+            {{ product.price }} conseillé
+          </p>
+          <p class="text-3xl tracking-tight text-gray-900 text-left px-4">
             {{ product.price }}
           </p>
-
-          <div class="mt-10">
-            <h3 class="text-sm font-medium text-gray-900">Details</h3>
-
-            <div class="mt-4">
-              <ul role="list" class="list-disc space-y-2 pl-4 text-sm">
-                <li v-for="highlight in product.highlights" :key="highlight" class="text-gray-400">
-                  <span class="text-gray-600">{{ highlight }}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
 
           <form class="mt-10">
             <!-- Sizes -->
@@ -162,9 +156,23 @@
       <div
         class="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16"
       >
-        <div class="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-          <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-            {{ product.name }}
+        <div class="mt-0 mb-4">
+          <h3 class="text-2xl text-center font-bold tracking-tight text-gray-900 sm:text-3xl">
+            Description
+          </h3>
+
+          <div class="mt-4">
+            <ul role="list" class="list-disc space-y-2 pl-4 text-sm">
+              <li v-for="highlight in product.highlights" :key="highlight" class="text-gray-400">
+                <span class="text-gray-600">{{ highlight }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8 mt-6">
+          <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl text-center">
+            Présentation TODO: Extend panel
           </h1>
         </div>
 
@@ -180,24 +188,53 @@
             </div>
           </div>
 
-          <div class="mt-10 hidden">
-            <h3 class="text-sm font-medium text-gray-900">Détails bas</h3>
-
-            <div class="mt-4">
-              <ul role="list" class="list-disc space-y-2 pl-4 text-sm">
-                <li v-for="highlight in product.highlights" :key="highlight" class="text-gray-400">
-                  <span class="text-gray-600">{{ highlight }}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
           <div class="mt-10">
-            <h2 class="text-sm font-medium text-gray-900">Rejoignez nous</h2>
-
-            <div class="mt-4 space-y-6">
-              <p class="text-sm text-gray-600">{{ product.details }}</p>
-            </div>
+            <section class="relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:px-8">
+              <div
+                class="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.indigo.100),white)] opacity-20"
+              />
+              <div
+                class="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"
+              />
+              <div class="mx-auto max-w-2xl lg:max-w-4xl">
+                <img
+                  class="mx-auto h-12"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGcxBWQeELeDJ6b8tPCIN7YNwq61NYvXoRfg&s"
+                  alt=""
+                />
+                <figure class="mt-10">
+                  <blockquote
+                    class="text-center text-xl font-semibold leading-8 text-gray-900 sm:text-2xl sm:leading-9"
+                  >
+                    <p>
+                      “Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo expedita
+                      voluptas culpa sapiente alias molestiae. Numquam corrupti in laborum sed rerum
+                      et corporis.”
+                    </p>
+                  </blockquote>
+                  <figcaption class="mt-10">
+                    <img
+                      class="mx-auto h-10 w-10 rounded-full"
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      alt=""
+                    />
+                    <div class="mt-4 flex items-center justify-center space-x-3 text-base">
+                      <div class="font-semibold text-gray-900">Judith Black</div>
+                      <svg
+                        viewBox="0 0 2 2"
+                        width="3"
+                        height="3"
+                        aria-hidden="true"
+                        class="fill-gray-900"
+                      >
+                        <circle cx="1" cy="1" r="1" />
+                      </svg>
+                      <div class="text-gray-600">CEO of Workcation</div>
+                    </div>
+                  </figcaption>
+                </figure>
+              </div>
+            </section>
           </div>
         </div>
       </div>
@@ -211,7 +248,7 @@ import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
 
 const product = {
   name: 'Helstons T.S',
-  price: '119€',
+  price: '119 €',
   href: '#',
   breadcrumbs: [
     { id: 1, name: 'Homme', href: '/products' },
