@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// eslint-disable-next-line no-undef
 module.exports = {
   content: [
     './components/**/*.{js,vue,ts}',
@@ -8,6 +9,15 @@ module.exports = {
     './nuxt.config.{js,ts}',
     './app.vue',
   ],
-  theme: {},
+  theme: {
+    extend: {
+      colors: {
+        'sunset-green': '#59857A',
+      },
+      gridTemplateRows: {
+        '[auto,auto,1fr]': 'auto auto 1fr',
+      },
+    },
+  },
   plugins: [],
 }
