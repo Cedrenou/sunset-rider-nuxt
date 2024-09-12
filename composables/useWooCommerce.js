@@ -12,6 +12,7 @@ export function useWooCommerce() {
   })
 
   const products = ref([])
+  const categories = ref([])
   const loading = ref(false)
   const error = ref(null)
 
@@ -19,7 +20,7 @@ export function useWooCommerce() {
     loading.value = true
     error.value = null
     try {
-      const response = await api.get('products')
+      const response = await api.get('products?status=publish')
       products.value = response.data
     } catch (err) {
       error.value = err
@@ -43,11 +44,42 @@ export function useWooCommerce() {
     }
   }
 
+  const fetchCategories = async () => {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await api.get('products/categories')
+      categories.value = response.data
+    } catch (err) {
+      error.value = err
+      console.error('Erreur lors de la récupération des catégories:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const addProduct = async (product) => {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await api.post('products', product)
+      return response.data
+    } catch (err) {
+      error.value = err
+      console.error('Erreur lors de la création du produit:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     products,
+    categories,
     loading,
     error,
     fetchProducts,
     fetchProduct,
+    fetchCategories,
+    addProduct,
   }
 }

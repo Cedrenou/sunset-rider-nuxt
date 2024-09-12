@@ -2,6 +2,7 @@
   <div class="bg-white">
     <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
       <h2 class="text-2xl font-bold tracking-tight text-gray-900 text-center">Category name</h2>
+      <button class="border-2 p-4 rounded" @click="console.log(products)">LOG</button>
 
       <div class="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 xl:gap-x-8">
         <div v-for="product in products" :key="product.id" class="group relative">
@@ -9,7 +10,8 @@
             class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:h-80"
           >
             <img
-              :src="product.imageSrc"
+              v-if="products.length && product.images.length"
+              :src="product.images[0].src"
               :alt="product.imageAlt"
               class="h-full w-full object-cover object-center lg:h-full lg:w-full"
             />
@@ -33,7 +35,9 @@
 </template>
 
 <script setup>
-const products = [
+import { useWooCommerce } from '~/composables/useWooCommerce'
+import { onMounted } from 'vue'
+const productsMock = [
   {
     id: 1,
     name: 'Helston',
@@ -125,4 +129,10 @@ const products = [
     color: 'Black',
   },
 ]
+
+const { products, loading, error, fetchProducts } = useWooCommerce()
+
+onMounted(() => {
+  fetchProducts()
+})
 </script>
