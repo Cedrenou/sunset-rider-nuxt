@@ -1,5 +1,6 @@
 // composables/useWooCommerce.ts
 import { ref } from 'vue'
+import { useRuntimeConfig } from '#app'
 import WooCommerceRestApi from '@woocommerce/woocommerce-rest-api'
 
 export function useWooCommerce() {
@@ -20,7 +21,7 @@ export function useWooCommerce() {
     loading.value = true
     error.value = null
     try {
-      const response = await api.get('products?status=publish')
+      const response = await api.get('products')
       products.value = response.data
     } catch (err) {
       error.value = err
@@ -72,6 +73,20 @@ export function useWooCommerce() {
     }
   }
 
+  const updateProduct = async (id, product) => {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await api.put(`products/${id}`, product)
+      return response.data
+    } catch (err) {
+      error.value = err
+      console.error('Erreur lors de la mise à jour du produit:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     products,
     categories,
@@ -81,5 +96,6 @@ export function useWooCommerce() {
     fetchProduct,
     fetchCategories,
     addProduct,
+    updateProduct,
   }
 }
