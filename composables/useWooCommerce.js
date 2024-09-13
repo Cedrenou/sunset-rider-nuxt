@@ -14,6 +14,7 @@ export function useWooCommerce() {
 
   const products = ref([])
   const categories = ref([])
+  const shippingClasses = ref([])
   const loading = ref(false)
   const error = ref(null)
 
@@ -87,14 +88,27 @@ export function useWooCommerce() {
     }
   }
 
+  const fetchShippingClasses = async () => {
+    try {
+      const response = await api.get('products/shipping_classes')
+      shippingClasses.value = response.data
+    } catch (err) {
+      console.error('Erreur lors de la récupération des classes de livraison:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     products,
     categories,
+    shippingClasses,
     loading,
     error,
     fetchProducts,
     fetchProduct,
     fetchCategories,
+    fetchShippingClasses,
     addProduct,
     updateProduct,
   }

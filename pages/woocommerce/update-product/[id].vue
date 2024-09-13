@@ -7,7 +7,7 @@
       <Loader v-if="loading" />
       <form
         v-else
-        @submit.prevent="updateProduct(productForm.id, productForm)"
+        @submit.prevent="handleUpdate(productForm.id, productForm)"
         class="p-6 space-y-6"
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -133,12 +133,16 @@
             <label for="shipping_class" class="block text-sm font-medium text-gray-700"
               >Shipping Class</label
             >
-            <input
-              id="shipping_class"
-              type="text"
-              v-model="productForm.shipping_class"
-              class="mt-1 block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
+            <select v-model="productForm.shipping_class">
+              <option disabled>Choisir une option</option>
+              <option
+                v-for="shippingClass in shippingClasses"
+                :key="shippingClass.id"
+                :value="shippingClass.slug"
+              >
+                {{ shippingClass.name }}
+              </option>
+            </select>
           </div>
 
           <div>
@@ -151,6 +155,92 @@
               v-model="productForm.attributes"
               class="mt-1 block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
+          </div>
+
+          <div>
+            <label for="global_unique_id" class="block text-sm font-medium text-gray-700"
+              >Global Unique ID</label
+            >
+            <input
+              id="global_unique_id"
+              type="text"
+              v-model="productForm.global_unique_id"
+              class="mt-1 block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label for="seoTitle" class="block text-sm font-medium text-gray-700">SEO Title</label>
+            <input
+              id="seoTitle"
+              type="text"
+              v-model="productForm.yoastData.seoTitle"
+              class="mt-1 block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label for="metaDescription" class="block text-sm font-medium text-gray-700"
+              >Meta Description</label
+            >
+            <input
+              id="metaDescription"
+              type="text"
+              v-model="productForm.yoastData.metaDescription"
+              class="mt-1 block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label for="focusKeyword" class="block text-sm font-medium text-gray-700"
+              >Focus Keyword</label
+            >
+            <input
+              id="focusKeyword"
+              type="text"
+              v-model="productForm.yoastData.focusKeyword"
+              class="mt-1 block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label for="gtin" class="block text-sm font-medium text-gray-700">GTIN</label>
+            <input
+              id="gtin"
+              type="text"
+              v-model="productForm.googleData.gtin"
+              class="mt-1 block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
+            <input
+              id="brand"
+              type="text"
+              v-model="productForm.googleData.brand"
+              class="mt-1 block w-full rounded-md p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label for="condition" class="block text-sm font-medium text-gray-700">Condition</label>
+            <select id="condition" v-model="productForm.googleData.condition">
+              <option value="default">Default</option>
+              <option value="default">New</option>
+              <option value="refurbished">Refurbished</option>
+              <option value="used">Used</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="gender">Gender</label>
+            <select name="gender" id="gender" v-model="productForm.googleData.gender">
+              <option value="" disabled>Pick one</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="unisex">Unisex</option>
+            </select>
           </div>
         </div>
 
@@ -171,6 +261,7 @@
         </div>
       </form>
     </div>
+    <pre>{{ productForm }}</pre>
   </div>
 </template>
 
@@ -207,19 +298,160 @@ const productForm = ref({
   cross_sell_ids: [], // get liste de toute les article en vente
   images: [], // upload images to DB attention il y a une image produit et des images gallery
   attributes: [], // ex: marque, taille, matière etc  Recuperer les attributs de wooCommerce
-  global_unique_id: '1234',
-  yoast_head_json: {
-    title: 'test test YOAST TEST',
+  global_unique_id: '',
+  yoastData: {
+    seoTitle: '', // titre SEO
+    metaDescription: '', // Meta descritption
+    focusKeyword: '', // Requete cible
+  },
+  googleData: {
+    gtin: '', // Global Trade Item Number
+    brand: '',
+    condition: '', // new, used, refurbished
+    gender: '',
+    size: '',
+    color: '',
+    material: '',
+    ageGroup: '',
+  },
+  facebookData: {
+    price: '',
+    description: '',
+    brand: '',
+    color: '',
+    material: '',
+    size: '',
+    ageGroup: '',
+    gender: '',
+    sport: '',
   },
 })
 
-const { updateProduct, categories, fetchCategories, fetchProduct, loading, error } =
-  useWooCommerce()
+const {
+  updateProduct,
+  categories,
+  shippingClasses,
+  fetchCategories,
+  fetchProduct,
+  fetchShippingClasses,
+  loading,
+  error,
+} = useWooCommerce()
+
+const handleUpdate = async (id) => {
+  try {
+    const updatedProduct = {
+      ...productForm.value,
+      meta_data: [
+        { key: '_yoast_wpseo_title', value: productForm.value.yoastData?.seoTitle || '' },
+        { key: '_yoast_wpseo_metadesc', value: productForm.value.yoastData?.metaDescription || '' },
+        { key: '_yoast_wpseo_focuskw', value: productForm.value.yoastData?.focusKeyword || '' },
+        { key: '_wc_gla_gtin', value: productForm.value.googleData?.gtin || '' },
+        { key: '_wc_gla_brand', value: productForm.value.googleData?.brand || '' },
+        { key: '_wc_gla_condition', value: productForm.value.googleData?.condition || '' },
+        { key: '_wc_gla_gender', value: productForm.value.googleData?.gender || '' },
+        { key: '_wc_gla_size', value: productForm.value.googleData?.size || '' },
+        { key: '_wc_gla_color', value: productForm.value.googleData?.color || '' },
+        { key: '_wc_gla_material', value: productForm.value.googleData?.material || '' },
+        { key: '_wc_gla_ageGroup', value: productForm.value.googleData?.ageGroup || '' },
+        { key: 'fb_product_price', value: productForm.value.facebookData?.price || '' },
+        { key: 'fb_product_description', value: productForm.value.facebookData?.description || '' },
+        {
+          key: '_wc_facebook_enhanced_catalog_attributes_brand',
+          value: productForm.value.facebookData?.brand || '',
+        },
+        {
+          key: '_wc_facebook_enhanced_catalog_attributes_color',
+          value: productForm.value.facebookData?.color || '',
+        },
+        {
+          key: '_wc_facebook_enhanced_catalog_attributes_material',
+          value: productForm.value.facebookData?.material || '',
+        },
+        {
+          key: '_wc_facebook_enhanced_catalog_attributes_size',
+          value: productForm.value.facebookData?.size || '',
+        },
+        {
+          key: '_wc_facebook_enhanced_catalog_attributes_age_group',
+          value: productForm.value.facebookData?.ageGroup || '',
+        },
+        {
+          key: '_wc_facebook_enhanced_catalog_attributes_gender',
+          value: productForm.value.facebookData?.gender || '',
+        },
+        {
+          key: '_wc_facebook_enhanced_catalog_attributes_sport',
+          value: productForm.value.facebookData?.sport || '',
+        },
+      ],
+    }
+    await updateProduct(id, updatedProduct)
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 onMounted(async () => {
+  await fetchShippingClasses()
   await fetchCategories()
-  await fetchProduct(route.params.id).then((data) => {
-    productForm.value = data
-  })
+  try {
+    const data = await fetchProduct(route.params.id)
+    productForm.value = {
+      ...data,
+      yoastData: {
+        seoTitle: data.meta_data.find((meta) => meta.key === '_yoast_wpseo_title')?.value || '',
+        metaDescription:
+          data.meta_data.find((meta) => meta.key === '_yoast_wpseo_metadesc')?.value || '',
+        focusKeyword:
+          data.meta_data.find((meta) => meta.key === '_yoast_wpseo_focuskw')?.value || '',
+      },
+      googleData: {
+        gtin: data.meta_data.find((meta) => meta.key === '_wc_gla_gtin')?.value || '',
+        brand: data.meta_data.find((meta) => meta.key === '_wc_gla_brand')?.value || '',
+        condition: data.meta_data.find((meta) => meta.key === '_wc_gla_condition')?.value || '',
+        gender: data.meta_data.find((meta) => meta.key === '_wc_gla_gender')?.value || '',
+        size: data.meta_data.find((meta) => meta.key === '_wc_gla_size')?.value || '',
+        color: data.meta_data.find((meta) => meta.key === '_wc_gla_color')?.value || '',
+        material: data.meta_data.find((meta) => meta.key === '_wc_gla_material')?.value || '',
+        ageGroup: data.meta_data.find((meta) => meta.key === '_wc_gla_ageGroup')?.value || '',
+      },
+      facebookData: {
+        price: data.meta_data.find((meta) => meta.key === 'fb_product_price')?.value || '',
+        description:
+          data.meta_data.find((meta) => meta.key === 'fb_product_description')?.value || '',
+        brand:
+          data.meta_data.find(
+            (meta) => meta.key === '_wc_facebook_enhanced_catalog_attributes_brand'
+          )?.value || '',
+        color:
+          data.meta_data.find(
+            (meta) => meta.key === '_wc_facebook_enhanced_catalog_attributes_color'
+          )?.value || '',
+        material:
+          data.meta_data.find(
+            (meta) => meta.key === '_wc_facebook_enhanced_catalog_attributes_material'
+          )?.value || '',
+        size:
+          data.meta_data.find(
+            (meta) => meta.key === '_wc_facebook_enhanced_catalog_attributes_size'
+          )?.value || '',
+        ageGroup:
+          data.meta_data.find(
+            (meta) => meta.key === '_wc_facebook_enhanced_catalog_attributes_age_group'
+          )?.value || '',
+        gender:
+          data.meta_data.find(
+            (meta) => meta.key === '_wc_facebook_enhanced_catalog_attributes_gender'
+          )?.value || '',
+        sport:
+          data.meta_data.find(
+            (meta) => meta.key === '_wc_facebook_enhanced_catalog_attributes_sport'
+          )?.value || '',
+      },
+    }
+  } catch (error) {
+    console.error(error)
+  }
 })
 </script>
